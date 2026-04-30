@@ -43,5 +43,5 @@ next-env.d.ts
 
 .agents/
 .claude/
-.prompts/
-.issues/
+prompts/
+issues/
