@@ -46,18 +46,10 @@ export default function NewActivityPage() {
     e.preventDefault();
     setError(null);
     
-    let isoScheduledAt = undefined;
-    if (formData.scheduledAt) {
-      const [hours, minutes] = formData.scheduledAt.split(":");
-      const date = new Date();
-      date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-      isoScheduledAt = date.toISOString();
-    }
-
     createMutation.mutate({
       title: formData.title,
       description: formData.description,
-      scheduledAt: isoScheduledAt,
+      scheduledAt: formData.scheduledAt ? new Date(formData.scheduledAt).toISOString() : undefined,
     });
   };
 
@@ -92,13 +84,6 @@ export default function NewActivityPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Kategori</Label>
-            <div className="rounded-2xl border border-input bg-background px-4 py-3 text-sm text-muted-foreground transition-all">
-              Pilih kategori (Placeholder)
-            </div>
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="description">Deskripsi (Opsional)</Label>
             <textarea
               id="description"
@@ -109,22 +94,16 @@ export default function NewActivityPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="time">Waktu</Label>
-              <Input
-                id="time"
-                type="time"
-                value={formData.scheduledAt}
-                onChange={(e) => setFormData({ ...formData, scheduledAt: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="frequency">Frekuensi</Label>
-              <div className="rounded-2xl border border-input bg-background px-4 py-3 text-sm text-muted-foreground transition-all">
-                Setiap hari
-              </div>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="datetime">Waktu & Tanggal</Label>
+            <Input
+              id="datetime"
+              type="datetime-local"
+              required
+              value={formData.scheduledAt}
+              onChange={(e) => setFormData({ ...formData, scheduledAt: e.target.value })}
+              className="block"
+            />
           </div>
 
           <div className="flex items-center justify-between rounded-2xl border bg-card p-4">
