@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, Bell } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -11,22 +11,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import client from "@/lib/api/client";
+import { components, paths } from "@/lib/api/types";
+
+type LoginBody = components["schemas"]["auth.login"];
+type LoginResponse = paths["/api/auth/login"]["post"]["responses"]["200"]["content"]["application/json"];
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("registered") === "true") {
+      setSuccess("Akun berhasil dibuat! Silakan masuk menggunakan email dan password Anda.");
+    }
+  }, [searchParams]);
 
   const loginMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
+    mutationFn: async (data: LoginBody) => {
       const { data: res, error: resError } = await client.POST("/api/auth/login", {
         body: data,
       });
       if (resError) throw resError;
       return res;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data: LoginResponse) => {
       if (data?.token) {
         localStorage.setItem("token", data.token);
         router.push("/dashboard");
@@ -68,6 +88,11 @@ export default function LoginPage() {
       {/* Login Form */}
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
         <div className="space-y-4">
+          {success && (
+            <div className="rounded-xl bg-primary/10 p-3 text-sm font-medium text-primary border border-primary/20">
+              {success}
+            </div>
+          )}
           {error && (
             <div className="rounded-xl bg-destructive/10 p-3 text-sm font-medium text-destructive">
               {error}
