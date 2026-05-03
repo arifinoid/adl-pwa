@@ -29,6 +29,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import client from "@/lib/api/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -59,13 +60,6 @@ export default function ProfilePage() {
     },
   });
 
-  if (isLoading)
-    return (
-      <div className="flex min-h-screen items-center justify-center italic text-muted-foreground">
-        Memuat profil...
-      </div>
-    );
-
   return (
     <div className="flex min-h-screen flex-col bg-background pb-20">
       {/* Header */}
@@ -77,78 +71,120 @@ export default function ProfilePage() {
       </header>
 
       <main className="px-6">
-        {/* User Info Card */}
-        <div className="mb-10 flex flex-col items-center pt-4">
-          <div className="relative mb-4">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary text-primary shadow-inner">
-              <User className="h-12 w-12" />
+        {isLoading ? (
+          <>
+            {/* Skeleton User Info */}
+            <div className="mb-10 flex flex-col items-center pt-4">
+              <Skeleton className="mb-4 h-24 w-24 rounded-full" />
+              <Skeleton className="mb-2 h-7 w-48 rounded-lg" />
+              <Skeleton className="h-4 w-32 rounded-lg" />
             </div>
-            <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
-              <Camera className="h-4 w-4" />
-            </button>
-          </div>
-          <h2 className="text-xl font-bold text-foreground">
-            {profile?.name || "User Name"}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {profile?.email || "email@example.com"}
-          </p>
-        </div>
 
-        {/* Menu Section */}
-        <section className="space-y-6">
-          <div className="space-y-2">
-            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Akun
-            </h3>
-            <div className="rounded-3xl border bg-card overflow-hidden">
-              <MenuItem
-                icon={<User className="h-5 w-5" />}
-                label="Edit Profil"
-              />
-              <div className="border-t mx-4" />
-              <MenuItem
-                icon={<Bell className="h-5 w-5" />}
-                label="Notifikasi"
-                action={<Switch defaultChecked />}
-              />
-              <div className="border-t mx-4" />
-              <MenuItem
-                icon={<Moon className="h-5 w-5" />}
-                label="Mode Gelap"
-                action={
-                  mounted ? (
-                    <Switch
-                      checked={resolvedTheme === "dark"}
-                      onCheckedChange={(checked) =>
-                        setTheme(checked ? "dark" : "light")
-                      }
-                    />
-                  ) : (
-                    <div className="h-6 w-11 rounded-full bg-secondary/50 animate-pulse" />
-                  )
-                }
-              />
+            {/* Skeleton Menu Sections */}
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Skeleton className="mx-2 h-3 w-16" />
+                <div className="rounded-3xl border bg-card overflow-hidden">
+                  <div className="h-16 border-b p-4">
+                    <Skeleton className="h-full w-full" />
+                  </div>
+                  <div className="h-16 border-b p-4">
+                    <Skeleton className="h-full w-full" />
+                  </div>
+                  <div className="h-16 p-4">
+                    <Skeleton className="h-full w-full" />
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="mx-2 h-3 w-16" />
+                <div className="rounded-3xl border bg-card overflow-hidden">
+                  <div className="h-16 border-b p-4">
+                    <Skeleton className="h-full w-full" />
+                  </div>
+                  <div className="h-16 p-4">
+                    <Skeleton className="h-full w-full" />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          </>
+        ) : (
+          <>
+            {/* User Info Card */}
+            <div className="mb-10 flex flex-col items-center pt-4">
+              <div className="relative mb-4">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary text-primary shadow-inner">
+                  <User className="h-12 w-12" />
+                </div>
+                <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+                  <Camera className="h-4 w-4" />
+                </button>
+              </div>
+              <h2 className="text-xl font-bold text-foreground">
+                {profile?.name || "User Name"}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {profile?.email || "email@example.com"}
+              </p>
+            </div>
 
-          <div className="space-y-2">
-            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Lainnya
-            </h3>
-            <div className="rounded-3xl border bg-card overflow-hidden">
-              <MenuItem
-                icon={<HelpCircle className="h-5 w-5" />}
-                label="Pusat Bantuan"
-              />
-              <div className="border-t mx-4" />
-              <MenuItem
-                icon={<Info className="h-5 w-5" />}
-                label="Tentang Aplikasi"
-              />
-            </div>
-          </div>
-        </section>
+            {/* Menu Section */}
+            <section className="space-y-6">
+              <div className="space-y-2">
+                <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Akun
+                </h3>
+                <div className="rounded-3xl border bg-card overflow-hidden">
+                  <MenuItem
+                    icon={<User className="h-5 w-5" />}
+                    label="Edit Profil"
+                  />
+                  <div className="border-t mx-4" />
+                  <MenuItem
+                    icon={<Bell className="h-5 w-5" />}
+                    label="Notifikasi"
+                    action={<Switch defaultChecked />}
+                  />
+                  <div className="border-t mx-4" />
+                  <MenuItem
+                    icon={<Moon className="h-5 w-5" />}
+                    label="Mode Gelap"
+                    action={
+                      mounted ? (
+                        <Switch
+                          checked={resolvedTheme === "dark"}
+                          onCheckedChange={(checked) =>
+                            setTheme(checked ? "dark" : "light")
+                          }
+                        />
+                      ) : (
+                        <Skeleton className="h-6 w-11 rounded-full" />
+                      )
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Lainnya
+                </h3>
+                <div className="rounded-3xl border bg-card overflow-hidden">
+                  <MenuItem
+                    icon={<HelpCircle className="h-5 w-5" />}
+                    label="Pusat Bantuan"
+                  />
+                  <div className="border-t mx-4" />
+                  <MenuItem
+                    icon={<Info className="h-5 w-5" />}
+                    label="Tentang Aplikasi"
+                  />
+                </div>
+              </div>
+            </section>
+          </>
+        )}
 
         {/* Logout Button */}
         <div className="mt-12 pb-8">
