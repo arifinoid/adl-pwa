@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -11,9 +11,10 @@ import {
   Info,
   LogOut,
   ChevronRight,
-  Camera
+  Camera,
 } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -31,8 +32,13 @@ import client from "@/lib/api/client";
 
 export default function ProfilePage() {
   const router = useRouter();
-  // Placeholder for theme logic (could use next-themes here)
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch by waiting until mounted
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile"],
@@ -53,7 +59,12 @@ export default function ProfilePage() {
     },
   });
 
-  if (isLoading) return <div className="flex min-h-screen items-center justify-center italic text-muted-foreground">Memuat profil...</div>;
+  if (isLoading)
+    return (
+      <div className="flex min-h-screen items-center justify-center italic text-muted-foreground">
+        Memuat profil...
+      </div>
+    );
 
   return (
     <div className="flex min-h-screen flex-col bg-background pb-20">
@@ -76,16 +87,25 @@ export default function ProfilePage() {
               <Camera className="h-4 w-4" />
             </button>
           </div>
-          <h2 className="text-xl font-bold text-foreground">{profile?.name || "User Name"}</h2>
-          <p className="text-sm text-muted-foreground">{profile?.email || "email@example.com"}</p>
+          <h2 className="text-xl font-bold text-foreground">
+            {profile?.name || "User Name"}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {profile?.email || "email@example.com"}
+          </p>
         </div>
 
         {/* Menu Section */}
         <section className="space-y-6">
           <div className="space-y-2">
-            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Akun</h3>
+            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Akun
+            </h3>
             <div className="rounded-3xl border bg-card overflow-hidden">
-              <MenuItem icon={<User className="h-5 w-5" />} label="Edit Profil" />
+              <MenuItem
+                icon={<User className="h-5 w-5" />}
+                label="Edit Profil"
+              />
               <div className="border-t mx-4" />
               <MenuItem
                 icon={<Bell className="h-5 w-5" />}
@@ -96,17 +116,36 @@ export default function ProfilePage() {
               <MenuItem
                 icon={<Moon className="h-5 w-5" />}
                 label="Mode Gelap"
-                action={<Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} />}
+                action={
+                  mounted ? (
+                    <Switch
+                      checked={resolvedTheme === "dark"}
+                      onCheckedChange={(checked) =>
+                        setTheme(checked ? "dark" : "light")
+                      }
+                    />
+                  ) : (
+                    <div className="h-6 w-11 rounded-full bg-secondary/50 animate-pulse" />
+                  )
+                }
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Lainnya</h3>
+            <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Lainnya
+            </h3>
             <div className="rounded-3xl border bg-card overflow-hidden">
-              <MenuItem icon={<HelpCircle className="h-5 w-5" />} label="Pusat Bantuan" />
+              <MenuItem
+                icon={<HelpCircle className="h-5 w-5" />}
+                label="Pusat Bantuan"
+              />
               <div className="border-t mx-4" />
-              <MenuItem icon={<Info className="h-5 w-5" />} label="Tentang Aplikasi" />
+              <MenuItem
+                icon={<Info className="h-5 w-5" />}
+                label="Tentang Aplikasi"
+              />
             </div>
           </div>
         </section>
@@ -125,9 +164,12 @@ export default function ProfilePage() {
             </AlertDialogTrigger>
             <AlertDialogContent className="w-[90vw] max-w-sm rounded-[2rem] p-8">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-xl font-bold">Keluar Akun?</AlertDialogTitle>
+                <AlertDialogTitle className="text-xl font-bold">
+                  Keluar Akun?
+                </AlertDialogTitle>
                 <AlertDialogDescription className="text-muted-foreground">
-                  Apakah Anda yakin ingin keluar dari aplikasi ADL? Anda perlu login kembali untuk mengakses data Anda.
+                  Apakah Anda yakin ingin keluar dari aplikasi ADL? Anda perlu
+                  login kembali untuk mengakses data Anda.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="mt-6 flex flex-col gap-2">
@@ -152,13 +194,23 @@ export default function ProfilePage() {
   );
 }
 
-function MenuItem({ icon, label, action }: { icon: React.ReactNode; label: string; action?: React.ReactNode }) {
+function MenuItem({
+  icon,
+  label,
+  action,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-secondary/30">
       <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-secondary/50 text-primary">
         {icon}
       </div>
-      <span className="flex-1 text-sm font-medium text-foreground">{label}</span>
+      <span className="flex-1 text-sm font-medium text-foreground">
+        {label}
+      </span>
       {action ? (
         action
       ) : (
