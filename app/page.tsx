@@ -20,7 +20,9 @@ export default function Home() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
             <span className="text-lg font-bold text-primary">A</span>
           </div>
-          <h1 className="text-lg font-bold text-foreground">Activity Daily Living</h1>
+          <h1 className="text-lg font-bold text-foreground">
+            Activity Daily Living
+          </h1>
         </div>
         <Button variant="ghost" size="icon" className="rounded-full">
           <Bell className="h-5 w-5" />
@@ -34,6 +36,7 @@ export default function Home() {
             src="/hero-illustration.png"
             alt="Mother and Child Illustration"
             fill
+            sizes="(max-width: 768px) 100vw, 300px"
             className="object-contain p-4"
             priority
           />
@@ -44,7 +47,8 @@ export default function Home() {
             Pantau dan dukung perkembangan si kecil setiap hari 💜
           </h2>
           <p className="px-4 text-[15px] leading-relaxed text-muted-foreground">
-            Aplikasi Monitoring Aktivitas Harian Anak Balita yang memudahkan Ibu memantau tumbuh kembang si kecil.
+            Aplikasi Monitoring Aktivitas Harian Anak Balita yang memudahkan Ibu
+            memantau tumbuh kembang si kecil.
           </p>
         </div>
       </section>
@@ -58,13 +62,18 @@ export default function Home() {
           {features.map((feature, index) => (
             <li key={index} className="flex items-start gap-3">
               <CheckCircle2 className="mt-0.5 h-5 w-5 text-primary" />
-              <span className="text-sm font-medium text-foreground">{feature}</span>
+              <span className="text-sm font-medium text-foreground">
+                {feature}
+              </span>
             </li>
           ))}
         </ul>
 
         <div className="mt-10">
-          <Button asChild className="h-12 w-full rounded-2xl text-base font-semibold">
+          <Button
+            asChild
+            className="h-12 w-full rounded-2xl text-base font-semibold"
+          >
             <Link href="/login">Mulai Sekarang</Link>
           </Button>
         </div>
