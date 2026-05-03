@@ -7,7 +7,7 @@
     "build": "bun run generate-api && next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "generate-api": "openapi-typescript http://localhost:8000/swagger/json -o lib/api/types.ts"
+    "generate-api": "bun run scripts/generate-api.ts"
   },
   "dependencies": {
     "@serwist/next": "^9.0.12",
