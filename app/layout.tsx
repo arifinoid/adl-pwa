@@ -20,6 +20,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "ADL PWA",
   description: "Activity Daily Living Progressive Web App",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
