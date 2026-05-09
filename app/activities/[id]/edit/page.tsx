@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import client from "@/lib/api/client";
 import { components } from "@/lib/api/types";
+import { ImagePicker } from "@/components/image-picker";
 
 type UpdateActivityBody = components["schemas"]["activity.update"];
 
@@ -24,7 +25,9 @@ export default function EditActivityPage({ params: paramsPromise }: { params: Pr
     description: "",
     scheduledAt: "",
     isCompleted: false,
+    imageUrl: "",
   });
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { data: activity, isLoading } = useQuery({
@@ -45,6 +48,7 @@ export default function EditActivityPage({ params: paramsPromise }: { params: Pr
         description: activity.description || "",
         scheduledAt: activity.scheduledAt ? new Date(activity.scheduledAt as string).toISOString().substring(0, 16) : "",
         isCompleted: activity.isCompleted,
+        imageUrl: activity.imageUrl || "",
       });
     }
   }, [activity]);
@@ -77,6 +81,7 @@ export default function EditActivityPage({ params: paramsPromise }: { params: Pr
       description: formData.description,
       scheduledAt: formData.scheduledAt ? new Date(formData.scheduledAt).toISOString() : undefined,
       isCompleted: formData.isCompleted,
+      imageUrl: formData.imageUrl,
     });
   };
 
@@ -134,6 +139,16 @@ export default function EditActivityPage({ params: paramsPromise }: { params: Pr
             />
           </div>
 
+          <div className="space-y-2">
+            <Label>Foto Aktivitas (Opsional)</Label>
+            <ImagePicker 
+              type="activity"
+              value={formData.imageUrl}
+              onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+              onUploading={setIsUploadingImage}
+            />
+          </div>
+
           <div className="flex items-center justify-between rounded-2xl border bg-card p-4">
             <div className="space-y-0.5">
               <Label>Selesai</Label>
@@ -149,11 +164,11 @@ export default function EditActivityPage({ params: paramsPromise }: { params: Pr
         <div className="mt-auto space-y-3 pt-8">
           <Button 
             type="submit" 
-            disabled={updateMutation.isPending}
+            disabled={updateMutation.isPending || isUploadingImage}
             className="h-12 w-full rounded-2xl gap-2 font-semibold shadow-lg shadow-primary/20"
           >
             <Save className="h-5 w-5" />
-            {updateMutation.isPending ? "Memperbarui..." : "Simpan Perubahan"}
+            {updateMutation.isPending ? "Memperbarui..." : isUploadingImage ? "Mengunggah..." : "Simpan Perubahan"}
           </Button>
           <Button 
             type="button" 

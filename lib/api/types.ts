@@ -155,6 +155,41 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        /** Update user profile */
+        patch: operations["patchApiUsersProfile"];
+        trace?: never;
+    };
+    "/api/upload/avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload avatar image (Proxy to file-service) */
+        post: operations["postApiUploadAvatar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/upload/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload activity image (Proxy to file-service) */
+        post: operations["postApiUploadActivity"];
+        delete?: never;
+        options?: never;
+        head?: never;
         patch?: never;
         trace?: never;
     };
@@ -177,12 +212,14 @@ export interface components {
             title: string;
             description?: string;
             scheduledAt?: string;
+            imageUrl?: string;
         };
         "activity.update": {
             title?: string;
             description?: string;
             scheduledAt?: string;
             isCompleted?: boolean;
+            imageUrl?: string;
         };
         "activity.params": {
             id: string | number;
@@ -203,6 +240,7 @@ export interface components {
             scheduledAt: (Record<string, never> | string | number) | null | string;
             createdAt: unknown;
             userId: number;
+            imageUrl: string | null;
         };
     };
     responses: never;
@@ -453,6 +491,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     }[];
                     "multipart/form-data": {
                         id: number;
@@ -462,6 +501,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     }[];
                     "text/plain": {
                         id: number;
@@ -471,6 +511,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     }[];
                 };
             };
@@ -504,6 +545,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                     "multipart/form-data": {
                         id: number;
@@ -513,6 +555,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                     "text/plain": {
                         id: number;
@@ -522,6 +565,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                 };
             };
@@ -551,6 +595,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                     "multipart/form-data": {
                         id: number;
@@ -560,6 +605,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                     "text/plain": {
                         id: number;
@@ -569,6 +615,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                 };
             };
@@ -665,6 +712,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                     "multipart/form-data": {
                         id: number;
@@ -674,6 +722,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                     "text/plain": {
                         id: number;
@@ -683,6 +732,7 @@ export interface operations {
                         scheduledAt: (Record<string, never> | string | number) | null | string;
                         createdAt: unknown;
                         userId: number;
+                        imageUrl: string | null;
                     };
                 };
             };
@@ -721,20 +771,23 @@ export interface operations {
                     "application/json": {
                         id: number;
                         email: string;
-                        name: string;
-                        created_at: string;
+                        username: string;
+                        avatarUrl: string | null;
+                        createdAt: unknown;
                     };
                     "multipart/form-data": {
                         id: number;
                         email: string;
-                        name: string;
-                        created_at: string;
+                        username: string;
+                        avatarUrl: string | null;
+                        createdAt: unknown;
                     };
                     "text/plain": {
                         id: number;
                         email: string;
-                        name: string;
-                        created_at: string;
+                        username: string;
+                        avatarUrl: string | null;
+                        createdAt: unknown;
                     };
                 };
             };
@@ -753,6 +806,161 @@ export interface operations {
                         message: string;
                     };
                 };
+            };
+        };
+    };
+    patchApiUsersProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    username?: string;
+                    email?: string;
+                    avatarUrl?: string;
+                };
+                "multipart/form-data": {
+                    username?: string;
+                    email?: string;
+                    avatarUrl?: string;
+                };
+                "text/plain": {
+                    username?: string;
+                    email?: string;
+                    avatarUrl?: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: number;
+                        email: string;
+                        username: string;
+                        avatarUrl: string | null;
+                        createdAt: unknown;
+                    };
+                    "multipart/form-data": {
+                        id: number;
+                        email: string;
+                        username: string;
+                        avatarUrl: string | null;
+                        createdAt: unknown;
+                    };
+                    "text/plain": {
+                        id: number;
+                        email: string;
+                        username: string;
+                        avatarUrl: string | null;
+                        createdAt: unknown;
+                    };
+                };
+            };
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message: string;
+                    };
+                    "multipart/form-data": {
+                        message: string;
+                    };
+                    "text/plain": {
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    postApiUploadAvatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: binary
+                     * @default File
+                     */
+                    file: string;
+                };
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @default File
+                     */
+                    file: string;
+                };
+                "text/plain": {
+                    /**
+                     * Format: binary
+                     * @default File
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    postApiUploadActivity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: binary
+                     * @default File
+                     */
+                    file: string;
+                };
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @default File
+                     */
+                    file: string;
+                };
+                "text/plain": {
+                    /**
+                     * Format: binary
+                     * @default File
+                     */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import client from "@/lib/api/client";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function ActivityDetailPage({ params: paramsPromise }: { params: Promise<{ id: string }> }) {
   const params = use(paramsPromise);
@@ -66,12 +67,25 @@ export default function ActivityDetailPage({ params: paramsPromise }: { params: 
 
       {/* Hero Content */}
       <div className="flex flex-col items-center text-center">
-        <div className={cn(
-          "mb-6 flex h-24 w-24 items-center justify-center rounded-[2rem] shadow-lg shadow-primary/10",
-          activity.isCompleted ? "bg-green-100 text-green-600" : "bg-primary/10 text-primary"
-        )}>
-          {activity.isCompleted ? <CheckCircle2 className="h-12 w-12" /> : <Clock className="h-12 w-12" />}
-        </div>
+        {activity.imageUrl ? (
+          <div className="relative mb-6 h-48 w-full overflow-hidden rounded-[2rem] shadow-lg shadow-primary/10">
+            <Image 
+              src={activity.imageUrl} 
+              alt={activity.title} 
+              fill 
+              className="object-cover"
+              priority
+              sizes="(max-width: 768px) 100vw, 800px"
+            />
+          </div>
+        ) : (
+          <div className={cn(
+            "mb-6 flex h-24 w-24 items-center justify-center rounded-[2rem] shadow-lg shadow-primary/10",
+            activity.isCompleted ? "bg-green-100 text-green-600" : "bg-primary/10 text-primary"
+          )}>
+            {activity.isCompleted ? <CheckCircle2 className="h-12 w-12" /> : <Clock className="h-12 w-12" />}
+          </div>
+        )}
         <h2 className="text-2xl font-bold text-foreground">{activity.title}</h2>
         <Badge variant={activity.isCompleted ? "success" : "warning"} className="mt-2 px-4 py-1">
           {activity.isCompleted ? "Selesai" : "Aktif"}

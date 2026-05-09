@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import client from "@/lib/api/client";
 import { components } from "@/lib/api/types";
+import { ImagePicker } from "@/components/image-picker";
 
 type CreateActivityBody = components["schemas"]["activity.create"];
 
@@ -20,9 +21,11 @@ export default function NewActivityPage() {
     title: "",
     description: "",
     scheduledAt: "",
+    imageUrl: "",
     frequency: "Setiap hari", // Placeholder for frequency
     status: true,
   });
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = useMutation({
@@ -49,6 +52,7 @@ export default function NewActivityPage() {
     createMutation.mutate({
       title: formData.title,
       description: formData.description,
+      imageUrl: formData.imageUrl,
       scheduledAt: formData.scheduledAt ? new Date(formData.scheduledAt).toISOString() : undefined,
     });
   };
@@ -106,6 +110,16 @@ export default function NewActivityPage() {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label>Foto Aktivitas (Opsional)</Label>
+            <ImagePicker 
+              type="activity"
+              value={formData.imageUrl}
+              onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+              onUploading={setIsUploadingImage}
+            />
+          </div>
+
           <div className="flex items-center justify-between rounded-2xl border bg-card p-4">
             <div className="space-y-0.5">
               <Label>Status</Label>
@@ -121,11 +135,11 @@ export default function NewActivityPage() {
         <div className="mt-auto space-y-3 pt-8">
           <Button 
             type="submit" 
-            disabled={createMutation.isPending}
+            disabled={createMutation.isPending || isUploadingImage}
             className="h-12 w-full rounded-2xl gap-2 font-semibold shadow-lg shadow-primary/20"
           >
             <Save className="h-5 w-5" />
-            {createMutation.isPending ? "Menyimpan..." : "Simpan"}
+            {createMutation.isPending ? "Menyimpan..." : isUploadingImage ? "Mengunggah..." : "Simpan"}
           </Button>
           <Button 
             type="button" 

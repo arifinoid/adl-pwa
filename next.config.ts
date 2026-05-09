@@ -2,7 +2,14 @@ import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.arifinoid.workers.dev",
+      },
+    ],
+  },
 };
 
 // Only apply the Serwist plugin in production to avoid Webpack/Turbopack conflicts.
