@@ -30,23 +30,38 @@ import {
 } from "@/components/ui/alert-dialog";
 import client from "@/lib/api/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImagePicker } from "@/components/image-picker";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   // Avoid hydration mismatch by waiting until mounted
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const { data: profile, isLoading } = useQuery({
+  const { data: profile, isLoading, refetch } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       const { data, error } = await client.GET("/api/users/profile");
       if (error) throw error;
       return data;
+    },
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (avatarUrl: string) => {
+      const { data, error } = await client.PATCH("/api/users/profile", {
+        body: { avatarUrl },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      refetch();
     },
   });
 
@@ -114,15 +129,15 @@ export default function ProfilePage() {
             {/* User Info Card */}
             <div className="mb-10 flex flex-col items-center pt-4">
               <div className="relative mb-4">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-secondary text-primary shadow-inner">
-                  <User className="h-12 w-12" />
-                </div>
-                <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
-                  <Camera className="h-4 w-4" />
-                </button>
+                <ImagePicker 
+                  type="avatar"
+                  value={profile?.avatarUrl}
+                  onChange={(url) => updateProfileMutation.mutate(url)}
+                  onUploading={setIsUploadingImage}
+                />
               </div>
               <h2 className="text-xl font-bold text-foreground">
-                {profile?.name || "User Name"}
+                {profile?.username || "User Name"}
               </h2>
               <p className="text-sm text-muted-foreground">
                 {profile?.email || "email@example.com"}
@@ -192,10 +207,11 @@ export default function ProfilePage() {
             <AlertDialogTrigger asChild>
               <Button
                 variant="ghost"
+                disabled={logoutMutation.isPending || isUploadingImage}
                 className="h-12 w-full rounded-2xl gap-2 font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive"
               >
                 <LogOut className="h-5 w-5" />
-                Keluar Akun
+                {isUploadingImage ? "Mengunggah..." : "Keluar Akun"}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="w-[90vw] max-w-sm rounded-[2rem] p-8">
